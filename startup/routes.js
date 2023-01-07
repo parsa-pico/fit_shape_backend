@@ -1,0 +1,22 @@
+const express = require('express');
+const error = require('../middlewares/error');
+const athlete = require('../routes/athlete');
+const staff = require('../routes/staff');
+const coachPlan = require('../routes/coachPlan');
+const coach = require('../routes/coach');
+const sportHistory = require('../routes/sportHistory');
+const sub = require('../routes/sub');
+const athleteWeight = require('../routes/athleteWeight');
+const payment = require('../routes/payment');
+module.exports = function (app) {
+  app.use(express.json());
+  app.use('/athlete', athlete);
+  app.use('/athlete/sport_history', sportHistory);
+  app.use('/athlete/athlete_weight', athleteWeight);
+  app.use('/staff', staff);
+  app.use('/coach/coach_plan', coachPlan);
+  app.use('/coach', coach);
+  app.use('/sub', sub);
+  app.use('/sub/payment', payment);
+  app.use(error);
+};
