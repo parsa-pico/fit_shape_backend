@@ -1,7 +1,7 @@
-const { promisePool } = require('../mysql/connection');
-const schema = require('../models/sportHistory');
-const Joi = require('joi');
-const crud = require('../mysql/crud.js');
+const { promisePool } = require("../mysql/connection");
+const schema = require("../models/sportHistory");
+const Joi = require("joi");
+const crud = require("../mysql/crud.js");
 class SportHistory {
   constructor(obj) {
     this.athlete_id = obj.athlete_id;
@@ -37,7 +37,8 @@ class SportHistory {
 
     const [rows] = await promisePool.execute(`select * from sport_history s
                           where s.athlete_id=${athlete_id}
-                          limit ${limit} offset ${offset} `);
+                          order  by s.sport 
+                          limit ${limit} offset ${offset}  `);
 
     return rows;
   }
@@ -53,14 +54,14 @@ class SportHistory {
     for (let key in updateObj) {
       this[key] = updateObj[key];
     }
-    return await crud.update('sport_history', updateObj, {
-      key: 'sport_history_id',
+    return await crud.update("sport_history", updateObj, {
+      key: "sport_history_id",
       value: this.sport_history_id,
     });
   }
   async delete() {
     await promisePool.execute(
-      'delete from sport_history where sport_history_id=?',
+      "delete from sport_history where sport_history_id=?",
       [this.sport_history_id]
     );
     return this;

@@ -1,14 +1,13 @@
-const { promisePool } = require('./connection');
+const { promisePool } = require("./connection");
 
 module.exports.update = async function (tableName, updateObj, idObj) {
   let q = [];
   for (let key in updateObj) {
     q.push(` ${key}='${updateObj[key]}' `);
   }
-  q = q.join(',');
-  // console.log(
-  //   `update ${tableName} set ${q} where ${idObj.key}='${idObj.value}'`
-  // );
+
+  q = q.join(",");
+
   const [rows] = await promisePool.query(
     `update ${tableName} set ${q} where ${idObj.key}='${idObj.value}'`
   );
@@ -23,7 +22,7 @@ module.exports.advancedSearch = async function advancedSearch(
   for (let key in queryObj) {
     queryArray.push(`${key} = '${queryObj[key]}'`);
   }
-  const union = unionWithAnd ? ' and ' : ' or ';
+  const union = unionWithAnd ? " and " : " or ";
   queryArray = queryArray.join(union);
   const [rows] = await promisePool.query(
     `select * from ${tableName} where ${queryArray}`

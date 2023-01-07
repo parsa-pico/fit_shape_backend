@@ -1,10 +1,10 @@
-const Joi = require('joi');
+const Joi = require("joi");
 
 module.exports = {
   national_code: Joi.string().required().min(10).max(10),
-  blood_type_id: Joi.number().required(),
+  blood_type_id: Joi.number().required().max(45),
   phone_number: Joi.string().required().min(11).max(11),
-  email: Joi.string().email().required(),
+  email: Joi.string().email().required().max(512),
   password: Joi.string().required().min(8).max(255),
   first_name: Joi.string().required().max(45),
   last_name: Joi.string().required().max(45),
