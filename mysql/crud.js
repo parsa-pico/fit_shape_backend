@@ -16,16 +16,18 @@ module.exports.update = async function (tableName, updateObj, idObj) {
 module.exports.advancedSearch = async function advancedSearch(
   tableName,
   queryObj,
-  unionWithAnd = true
+  unionWithAnd = true,
+  select = "*"
 ) {
   let queryArray = [];
   for (let key in queryObj) {
     queryArray.push(`${key} = '${queryObj[key]}'`);
   }
+
   const union = unionWithAnd ? " and " : " or ";
   queryArray = queryArray.join(union);
   const [rows] = await promisePool.query(
-    `select * from ${tableName} where ${queryArray}`
+    `select  ${select}  from ${tableName} where ${queryArray}`
   );
   return rows;
 };

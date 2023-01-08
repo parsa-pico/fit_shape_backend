@@ -7,6 +7,7 @@ const sportHistory = require("./sportHistory");
 const athleteAuth = require("../middlewares/athleteAuth");
 const SubHasPlan = require("../entities/SubHasPlan");
 const Sub = require("../entities/Sub");
+const Staff = require("../entities/Staff");
 const router = express.Router();
 
 //signup
@@ -56,6 +57,14 @@ router.get("/is_unique/:email", async (req, res) => {
   const athlete = Athlete.findById(req.params.email);
   if (athlete) return res.status(400).send("athlete already exists");
   return res.send("this email dosent exists yet");
+});
+router.get("/coach", athleteAuth, async (req, res) => {
+  const rows = await Staff.advancedSearch(
+    { job_position_id: 2 },
+    true,
+    `staff_id,concat(first_name,' ',last_name) as full_name`
+  );
+  return res.send(rows);
 });
 //update
 router.put("/", athleteAuth, async (req, res) => {

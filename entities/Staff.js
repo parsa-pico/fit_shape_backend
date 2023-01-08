@@ -1,9 +1,9 @@
-const schema = require('../models/staff');
-const { promisePool } = require('../mysql/connection');
-const bcrypt = require('bcrypt');
-const crud = require('../mysql/crud.js');
-const authenticationSchema = require('../models/authentication');
-const Joi = require('joi');
+const schema = require("../models/staff");
+const { promisePool } = require("../mysql/connection");
+const bcrypt = require("bcrypt");
+const crud = require("../mysql/crud.js");
+const authenticationSchema = require("../models/authentication");
+const Joi = require("joi");
 class Staff {
   constructor(obj) {
     this.national_code = obj.national_code;
@@ -26,10 +26,10 @@ class Staff {
     return authenticationSchema.validate(obj);
   }
   static async findOne(parameter, value) {
-    return await crud.findOne('staff', parameter, value);
+    return await crud.findOne("staff", parameter, value);
   }
-  static async advancedSearch(queryObj, unionWithAnd = true) {
-    return await crud.advancedSearch('staff', queryObj, unionWithAnd);
+  static async advancedSearch(queryObj, unionWithAnd = true, select) {
+    return await crud.advancedSearch("staff", queryObj, unionWithAnd, select);
   }
   static async findById(id) {
     const [rows] = await promisePool.execute(
@@ -43,8 +43,8 @@ class Staff {
     for (let key in updateObj) {
       this[key] = updateObj[key];
     }
-    return await crud.update('staff', updateObj, {
-      key: 'staff_id',
+    return await crud.update("staff", updateObj, {
+      key: "staff_id",
       value: this.staff_id,
     });
   }
@@ -59,7 +59,7 @@ class Staff {
   async insert() {
     this.password = await bcrypt.hash(this.password, 10);
     const [rows] = await promisePool.execute(
-      'call fit_shape.sign_up_staff(?,?,?,?,?,?,?,?,?,?)',
+      "call fit_shape.sign_up_staff(?,?,?,?,?,?,?,?,?,?)",
       [
         this.national_code,
         this.phone_number,
