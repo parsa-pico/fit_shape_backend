@@ -11,6 +11,7 @@ const athleteWeight = require("../routes/athleteWeight");
 const payment = require("../routes/payment");
 const athleteSubPlan = require("../routes/athleteSubPlan");
 const coachSubPlan = require("../routes/coachSubPlan");
+const subCloset = require("../routes/subCloset");
 module.exports = function (app) {
   app.use(cors());
   app.use(express.json());
@@ -20,6 +21,7 @@ module.exports = function (app) {
   app.use("/athlete/sub_plan", athleteSubPlan);
   app.use("/sub", sub);
   app.use("/sub/payment", payment);
+  app.use("/sub/sub_closet", subCloset);
   app.use("/staff", staff);
   app.use("/coach/coach_plan", coachPlan);
   app.use("/coach", coach);
