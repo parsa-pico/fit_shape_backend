@@ -45,6 +45,7 @@ class Sub {
     from subscription s 
     left join staff sf on (sf.staff_id=s.coach_id)
     where s.athlete_id=${athlete_id} 
+    order by sub_id desc
     limit ${limit} offset ${offset}  `);
     return rows;
   }
@@ -54,9 +55,9 @@ class Sub {
       [this.sub_type_id, this.coach_id, this.athlete_id, this.total_days]
     );
 
-    return rows[0];
+    this.sub_id = rows[0][0].sub_id;
   }
-  async mustPayAmount() {
+  async mustPayAmountWithInsertedSub() {
     const [rows] = await promisePool.execute(
       `select (st.price_per_day* s.total_days) as total_payment_amount
                         from subscription s
@@ -66,6 +67,14 @@ class Sub {
     );
 
     return rows[0].total_payment_amount;
+  }
+  async mustPayAmount() {
+    const [rows] = await promisePool.execute(
+      `select price_per_day from sub_type where sub_type_id=?  `,
+      [this.sub_type_id]
+    );
+    const pricePerDay = rows[0].price_per_day;
+    return pricePerDay * this.total_days;
   }
   static validateCoach(updateObj) {
     return Joi.object({

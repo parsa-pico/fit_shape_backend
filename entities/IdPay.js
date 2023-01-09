@@ -1,19 +1,19 @@
-const { default: axios } = require('axios');
+const { default: axios } = require("axios");
 
 class IdPay {
   static async makePayment(sub_id, amount) {
     const { data } = await axios.post(
-      'https://api.idpay.ir/v1.1/payment',
+      "https://api.idpay.ir/v1.1/payment",
       {
         order_id: sub_id.toString(),
         amount,
-        callback: 'http://localhost:3000/callback',
+        callback: "http://localhost:3001/callback/verify_payment",
       },
       {
         headers: {
-          'content-type': 'application/json',
-          'X-API-KEY': process.env.ID_PAY_AUTH_KEY,
-          'X-SANDBOX': 1,
+          "content-type": "application/json",
+          "X-API-KEY": process.env.ID_PAY_AUTH_KEY,
+          "X-SANDBOX": 1,
         },
       }
     );
