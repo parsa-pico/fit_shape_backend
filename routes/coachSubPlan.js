@@ -1,5 +1,12 @@
 const express = require("express");
+const Sub = require("../entities/Sub");
+const SubHasPlan = require("../entities/SubHasPlan");
+const coachAuth = require("../middlewares/coachAuth");
+const staffAuth = require("../middlewares/staffAuth");
+const subPlanValidation = require("../middlewares/subPlanValidation");
+
 const router = express.Router();
+
 router.get(
   "/sub_plan/:sub_id/:limit/:pageNumber",
   staffAuth,

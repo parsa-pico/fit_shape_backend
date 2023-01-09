@@ -1,5 +1,9 @@
 const express = require("express");
+const Sub = require("../entities/Sub");
+const SubHasPlan = require("../entities/SubHasPlan");
+const athleteAuth = require("../middlewares/athleteAuth");
 const router = express.Router();
+
 router.get(
   "/sub_plan/:sub_id/:limit/:pageNumber",
   athleteAuth,
