@@ -8,7 +8,7 @@ const subPlanValidation = require("../middlewares/subPlanValidation");
 const router = express.Router();
 
 router.get(
-  "/sub_plan/:sub_id/:limit/:pageNumber",
+  "/:sub_id/:limit/:pageNumber",
   staffAuth,
   coachAuth,
   async (req, res) => {
@@ -25,19 +25,13 @@ router.get(
     return res.send(rows);
   }
 );
-router.post(
-  "/sub_plan",
-  staffAuth,
-  coachAuth,
-  subPlanValidation,
-  async (req, res) => {
-    const subHasPlan = new SubHasPlan(req.body);
-    await subHasPlan.insert();
-    return res.send(subHasPlan);
-  }
-);
+router.post("/", staffAuth, coachAuth, subPlanValidation, async (req, res) => {
+  const subHasPlan = new SubHasPlan(req.body);
+  await subHasPlan.insert();
+  return res.send(subHasPlan);
+});
 router.delete(
-  "/sub_plan",
+  "/",
   staffAuth,
   coachAuth,
   subPlanValidation,

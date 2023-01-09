@@ -31,7 +31,7 @@ router.post("/", athleteAuth, async (req, res) => {
     ...req.body,
     athlete_id: req.athlete.athlete_id,
   });
-  if (sub.sub_type_id !== 2 && sub.coach_id)
+  if (sub.sub_type_id != 2 && sub.coach_id)
     return res.status(400).send("normal sub cannot have coach");
   await sub.insert();
   console.log(sub);
@@ -58,7 +58,7 @@ router.put("/:id", athleteAuth, async (req, res) => {
   const sub = await Sub.findById(req.params.id);
 
   if (!sub) return res.status(404).send("didnt find subscription with this id");
-  if (sub.sub_type_id !== 2)
+  if (sub.sub_type_id != 2)
     return res.status(403).send("your subscription type is normal");
   if (sub.athlete_id !== req.athlete.athlete_id)
     return res
