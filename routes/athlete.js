@@ -68,8 +68,10 @@ router.get("/coach", athleteAuth, async (req, res) => {
 });
 //update
 router.put("/", athleteAuth, async (req, res) => {
-  if (req.body.password)
-    return res.status(403).send("you cant change password with this api");
+  if (req.body.password || req.body.email)
+    return res
+      .status(403)
+      .send("you cant change email or password with this api");
   const athlete = await Athlete.findById(req.athlete.athlete_id);
   // if (!athlete) return res.status(404).send("athlete not found");
   const { error } = Athlete.customValidate(req.body);

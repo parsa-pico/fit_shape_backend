@@ -15,6 +15,6 @@ router.post("/", athleteAuth, async (req, res) => {
     return res.status(403).send("you should pay your sub first");
   if (!sub.remaning_days) return res.status(403).send("this sub is expired");
   const closet_number = await Closet.assignClosetToSub(sub.sub_id);
-  return res.send(closet_number);
+  return res.send({ closet_number });
 });
 module.exports = router;

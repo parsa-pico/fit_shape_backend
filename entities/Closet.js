@@ -10,7 +10,9 @@ class Closet {
       `call fit_shape.update_closet_for_sub(?);`,
       [sub_id]
     );
-    return rows[0].free_closet_number;
+
+    if (rows[0][0].free_closet_number === undefined) return null;
+    return rows[0][0].free_closet_number;
   }
 }
 module.exports = Closet;

@@ -17,6 +17,7 @@ class Staff {
     this.alley = obj.alley;
     this.house_number = obj.house_number;
     this.staff_id = obj.staff_id || null;
+    this.job_position_id = obj.job_position_id || null;
   }
   validate() {
     const { staff_id, ...rest } = this;
@@ -26,7 +27,8 @@ class Staff {
     return authenticationSchema.validate(obj);
   }
   static async findOne(parameter, value) {
-    return await crud.findOne("staff", parameter, value);
+    const rows = await crud.findOne("staff", parameter, value);
+    return new Staff(rows);
   }
   static async advancedSearch(queryObj, unionWithAnd = true, select) {
     return await crud.advancedSearch("staff", queryObj, unionWithAnd, select);
