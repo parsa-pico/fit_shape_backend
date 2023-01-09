@@ -16,14 +16,17 @@ class CoachPlan {
 
   async insert() {
     const [rows] = await promisePool.execute(
-      `insert into coach_plan() value(default,?,?,?)`,
+      `insert into coach_plan() value(default,?,?,?,?)`,
       [this.coach_id, this.plan_type_id, this.description, this.title]
     );
 
     this.coach_plan_id = rows.insertId;
     return this;
   }
-
+  static async getPlanTypes() {
+    const [rows] = await promisePool.execute(`select * from coach_plan_type `);
+    return rows;
+  }
   static customValidate(updateObj) {
     const customSchema = {};
     for (let key in updateObj) {
@@ -36,9 +39,11 @@ class CoachPlan {
   static async findAllPerCoach(id, limit, pageNumber) {
     const offset = (pageNumber - 1) * limit;
 
-    const [rows] = await promisePool.execute(`select * from coach_plan
-                         c where c.coach_id=${id}
-                          limit ${limit} offset ${offset} `);
+    const [rows] = await promisePool.execute(`
+    select * from coach_plan c
+    join coach_plan_type using(plan_type_id)
+    where c.coach_id=${id} 
+    limit ${limit} offset ${offset} `);
     return rows;
   }
   static async findById(id) {

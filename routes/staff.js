@@ -8,10 +8,10 @@ const router = express.Router();
 
 //signup
 router.post("/sign_up", async (req, res) => {
-  const staff = new Staff(req.body);
-  const { error } = staff.validate(req.body);
-
+  const { error } = Staff.validate(req.body);
   if (error) return res.status(400).send(error.message);
+
+  const staff = new Staff(req.body);
   const rows = await Staff.advancedSearch(
     {
       national_code: staff.national_code,
@@ -37,7 +37,7 @@ router.post("/login", async (req, res) => {
   );
   if (!isValidPassword)
     return res.status(400).send("invalid user name or password");
-  console.log(staff);
+
   if (!staff.job_position_id)
     return res.status(403).send("owner didnt give you any job position yet");
   const token = jwt.sign(
@@ -49,6 +49,10 @@ router.post("/login", async (req, res) => {
       email: staff.email,
       national_code: staff.national_code,
       job_position_id: staff.job_position_id,
+      city: staff.city,
+      street: staff.street,
+      alley: staff.alley,
+      house_number: staff.house_number,
     },
     process.env.JWT_PRIVATE_KEY
   );

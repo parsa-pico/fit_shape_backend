@@ -19,9 +19,8 @@ class Staff {
     this.staff_id = obj.staff_id || null;
     this.job_position_id = obj.job_position_id || null;
   }
-  validate() {
-    const { staff_id, ...rest } = this;
-    return Joi.object(schema).validate(rest);
+  static validate(obj) {
+    return Joi.object(schema).validate(obj);
   }
   static validateUserPass(obj) {
     return authenticationSchema.validate(obj);
