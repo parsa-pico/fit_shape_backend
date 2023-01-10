@@ -49,6 +49,21 @@ class Staff {
       value: this.staff_id,
     });
   }
+  //diffrence is just not having dobule quotes between updateObj[key]
+  async updateJustIntValues(updateObj) {
+    for (let key in updateObj) {
+      this[key] = updateObj[key];
+    }
+    let q = [];
+    for (let key in updateObj) {
+      q.push(` ${key}=${updateObj[key]} `);
+    }
+    q = q.join(",");
+    const [rows] = await promisePool.query(
+      `update staff set ${q} where staff_id='${this.staff_id}'`
+    );
+    return rows;
+  }
   static customValidate(updateObj) {
     const customSchema = {};
     for (let key in updateObj) {

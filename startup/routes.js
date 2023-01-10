@@ -12,6 +12,7 @@ const payment = require("../routes/payment");
 const athleteSubPlan = require("../routes/athleteSubPlan");
 const coachSubPlan = require("../routes/coachSubPlan");
 const subCloset = require("../routes/subCloset");
+const owner = require("../routes/owner");
 module.exports = function (app) {
   app.use(cors());
   app.use(express.json());
@@ -26,5 +27,6 @@ module.exports = function (app) {
   app.use("/coach/coach_plan", coachPlan);
   app.use("/coach", coach);
   app.use("/coach/sub_plan", coachSubPlan);
+  app.use("/owner", owner);
   app.use(error);
 };
