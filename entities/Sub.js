@@ -33,6 +33,7 @@ class Sub {
       ,first_name,last_name,height from subscription s 
       join athlete using (athlete_id)
       where s.coach_id=${coach_id} and s.remaning_days !=0  and s.is_payed=1
+      order by s.created_date desc
       limit ${limit} offset ${offset} `);
     return rows;
   }
