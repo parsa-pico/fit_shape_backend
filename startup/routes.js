@@ -13,6 +13,7 @@ const athleteSubPlan = require("../routes/athleteSubPlan");
 const coachSubPlan = require("../routes/coachSubPlan");
 const subCloset = require("../routes/subCloset");
 const owner = require("../routes/owner");
+const entrance = require("../routes/entrance");
 module.exports = function (app) {
   app.use(cors());
   app.use(express.json());
@@ -28,5 +29,6 @@ module.exports = function (app) {
   app.use("/coach", coach);
   app.use("/coach/sub_plan", coachSubPlan);
   app.use("/owner", owner);
+  app.use("/entrance", entrance);
   app.use(error);
 };

@@ -12,10 +12,10 @@ const router = express.Router();
 
 //signup
 router.post("/sign_up", async (req, res) => {
-  const athlete = new Athlete(req.body);
-  const { error } = athlete.validate(req.body);
-
+  const { error } = Athlete.validate(req.body);
   if (error) return res.status(400).send(error.message);
+  const athlete = new Athlete(req.body);
+
   const rows = await Athlete.advancedSearch(
     {
       // national_code: athlete.national_code,

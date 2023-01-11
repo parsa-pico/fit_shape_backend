@@ -20,10 +20,10 @@ class Athlete {
     this.alley = obj.alley;
     this.house_number = obj.house_number;
     this.athlete_id = obj.athlete_id || null;
+    this.is_in_gym = obj.is_in_gym || null;
   }
-  validate() {
-    const { athlete_id, ...rest } = this;
-    return Joi.object(schema).validate(rest);
+  static validate(obj) {
+    return Joi.object(schema).validate(obj);
   }
   static validateUserPass(obj) {
     return authentication.validate(obj);
@@ -39,6 +39,15 @@ class Athlete {
       `select * from athlete a where a.athlete_id=? limit 1`,
       [id]
     );
+    if (rows.length === 0) return null;
+    return new Athlete(rows[0]);
+  }
+  static async findByRfidTag(tag) {
+    const [rows] = await promisePool.execute(
+      `select athlete_id,is_in_gym from athlete a where a.rfid_tag=? limit 1`,
+      [tag]
+    );
+
     if (rows.length === 0) return null;
     return new Athlete(rows[0]);
   }

@@ -25,6 +25,14 @@ class Sub {
     if (rows[0].does_have_active_sub) return true;
     return false;
   }
+  static async findActiveSub(athlete_id) {
+    const [rows] = await promisePool.execute(`SELECT * FROM subscription
+      where athlete_id=${athlete_id} and is_payed=1 and remaning_days!=0 
+      ;`);
+
+    if (rows.length === 0) return null;
+    return rows[0];
+  }
   static async findAllValidPerCoach(coach_id, limit, pageNumber) {
     const offset = (pageNumber - 1) * limit;
     const [rows] = await promisePool.execute(`
