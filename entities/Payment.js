@@ -1,8 +1,8 @@
-const { promisePool } = require('../mysql/connection');
-const schema = require('../models/payment');
-const verifyPaymentSchema = require('../models/verifyPayment');
-const Joi = require('joi');
-const crud = require('../mysql/crud.js');
+const { promisePool } = require("../mysql/connection");
+const schema = require("../models/payment");
+const verifyPaymentSchema = require("../models/verifyPayment");
+const Joi = require("joi");
+const crud = require("../mysql/crud.js");
 class Payment {
   constructor(obj) {
     this.payment_id = obj.payment_id;
@@ -20,6 +20,40 @@ class Payment {
   static validateForVeifyPayment(obj) {
     return Joi.object(verifyPaymentSchema).validate(obj);
   }
+  static async findAll(limit, pageNumber) {
+    const offset = (pageNumber - 1) * limit;
+
+    const [rows] = await promisePool.query(
+      `
+    SELECT athlete_id, first_name,last_name,phone_number,national_code,
+    payed_date_time,payment_tracking_code,payment_amount,status_id
+    FROM payment p 
+    join subscription s using(sub_id)
+    join athlete a using (athlete_id)
+    order by payed_date_time desc
+    limit ? offset ?
+    `,
+      [limit, offset]
+    );
+
+    return rows;
+  }
+  static async findAllPayedPerAthlete() {
+    const [rows] = await promisePool.execute(
+      `
+      SELECT athlete_id, first_name,last_name,
+      phone_number,national_code,sum(payment_amount) as total_payment
+      FROM payment p 
+      join subscription s using(sub_id)
+      join athlete a using (athlete_id)
+      where status_id=3
+      group by athlete_id with rollup    
+    `
+    );
+
+    return rows;
+  }
+
   async insert() {
     const [rows] = await promisePool.execute(
       `insert into payment
@@ -37,14 +71,6 @@ class Payment {
     return rows[0];
   }
 
-  //   static customValidate(updateObj) {
-  //     const customSchema = {};
-  //     for (let key in updateObj) {
-  //       if (schema[key]) customSchema[key] = schema[key];
-  //     }
-
-  //     return Joi.object(customSchema).validate(updateObj);
-  //   }
   static async findById(id) {
     const [rows] = await promisePool.execute(
       `select * from payment p where p.payment_id = ? limit 1`,
@@ -58,8 +84,8 @@ class Payment {
     for (let key in updateObj) {
       this[key] = updateObj[key];
     }
-    return await crud.update('payment', updateObj, {
-      key: 'payment_id',
+    return await crud.update("payment", updateObj, {
+      key: "payment_id",
       value: this.payment_id,
     });
   }
@@ -71,11 +97,5 @@ class Payment {
     this.payment_tracking_code = payment_tracking_code;
     this.status_id = 3;
   }
-  //   async delete() {
-  //     await promisePool.execute('delete from subscription where sub_id=?', [
-  //       this.sport_history_id,
-  //     ]);
-  //     return this;
-  //   }
 }
 module.exports = Payment;

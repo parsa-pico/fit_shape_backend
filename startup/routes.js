@@ -20,8 +20,8 @@ module.exports = function (app) {
   app.use("/athlete/sport_history", sportHistory);
   app.use("/athlete/athlete_weight", athleteWeight);
   app.use("/athlete/sub_plan", athleteSubPlan);
-  app.use("/sub", sub);
   app.use("/sub/payment", payment);
+  app.use("/sub", sub);
   app.use("/sub/sub_closet", subCloset);
   app.use("/staff", staff);
   app.use("/coach/coach_plan", coachPlan);

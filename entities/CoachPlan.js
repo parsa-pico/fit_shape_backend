@@ -43,6 +43,7 @@ class CoachPlan {
     select * from coach_plan c
     join coach_plan_type using(plan_type_id)
     where c.coach_id=${id} 
+    order by c.coach_plan_id  desc
     limit ${limit} offset ${offset} `);
     return rows;
   }
