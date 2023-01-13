@@ -18,12 +18,20 @@ class Athlete {
     this.city = obj.city;
     this.street = obj.street;
     this.alley = obj.alley;
+    this.rfid_tag = obj.rfid_tag || null;
     this.house_number = obj.house_number;
     this.athlete_id = obj.athlete_id || null;
     this.is_in_gym = obj.is_in_gym || null;
   }
   static validate(obj) {
     return Joi.object(schema).validate(obj);
+  }
+  static async findAll() {
+    const [rows] = await promisePool.execute(`select
+     athlete_id,national_code,phone_number,email,blood_type_id,
+     national_code,height,rfid_tag,is_in_gym,
+     first_name,last_name,city,street,alley,house_number from athlete `);
+    return rows;
   }
   static validateUserPass(obj) {
     return authentication.validate(obj);
@@ -44,7 +52,8 @@ class Athlete {
   }
   static async findByRfidTag(tag) {
     const [rows] = await promisePool.execute(
-      `select athlete_id,is_in_gym from athlete a where a.rfid_tag=? limit 1`,
+      `select first_name,last_name , athlete_id,is_in_gym 
+       from athlete a where a.rfid_tag=? limit 1`,
       [tag]
     );
 
