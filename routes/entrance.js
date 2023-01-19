@@ -7,6 +7,15 @@ const Athlete = require("../entities/athlete");
 const Sub = require("../entities/Sub");
 const Entracne = require("../entities/Entrance");
 
+router.get(
+  "/:limit/:pageNumber",
+  staffAuth,
+  secretaryAuth,
+  async (req, res) => {
+    const rows = await Entracne.getAll(req.params.limit, req.params.pageNumber);
+    return res.send(rows);
+  }
+);
 router.post("/", staffAuth, secretaryAuth, async (req, res) => {
   if (!req.body.rfid_tag) return res.status(400).send("rfid_tag required");
   const athlete = await Athlete.findByRfidTag(req.body.rfid_tag);

@@ -36,19 +36,19 @@ class Sub {
   static async findAllValidPerCoach(coach_id, limit, pageNumber) {
     const offset = (pageNumber - 1) * limit;
     const [rows] = await promisePool.execute(`
-      select athlete_id,sub_id,coach_id
+      select athlete_id,sub_id,coach_id,remaning_days
       ,blood_type_id,phone_number
       ,first_name,last_name,height from subscription s 
       join athlete using (athlete_id)
-      where s.coach_id=${coach_id} and s.remaning_days !=0  and s.is_payed=1
-      order by s.created_date desc
+      where s.coach_id=${coach_id}  and s.is_payed=1
+      order by s.created_date_time desc
       limit ${limit} offset ${offset} `);
     return rows;
   }
   static async findAllPerAthlete(athlete_id, limit, pageNumber) {
     const offset = (pageNumber - 1) * limit;
     const [rows] = await promisePool.execute(`
-    select sub_id,created_date,closet_number,sub_type_id,coach_id,
+    select sub_id,created_date_time,closet_number,sub_type_id,coach_id,
     total_days,remaning_days,
     is_payed,concat(first_name,' ',last_name) as coach_full_name
     from subscription s 

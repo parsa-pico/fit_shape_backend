@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require("joi");
 
 module.exports = {
   national_code: Joi.string().required().min(10).max(10),
@@ -10,5 +10,5 @@ module.exports = {
   city: Joi.string().required().max(45),
   street: Joi.string().required().max(255),
   alley: Joi.string().required().max(255),
-  house_number: Joi.string().required().max(10),
+  house_number: Joi.number().required(),
 };

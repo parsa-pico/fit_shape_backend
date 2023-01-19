@@ -6,6 +6,18 @@ class Entracne {
     this.entered_date_time = obj.entered_date_time || null;
     this.exited_date_time = obj.exited_date_time || null;
   }
+
+  static async getAll(limit, pageNumber) {
+    const offset = (pageNumber - 1) * limit;
+
+    const [rows] = await promisePool.execute(`
+    SELECT e.entrance_id,e.entered_date_time,e.exited_date_time,first_name,last_name
+    FROM entrance e 
+    join subscription using(sub_id)
+    join athlete using(athlete_id)
+    limit ${limit} offset ${offset} `);
+    return rows;
+  }
   async submitEntrance(athlete_id) {
     await promisePool.execute(`call submit_entrance(?,?);`, [
       athlete_id,
