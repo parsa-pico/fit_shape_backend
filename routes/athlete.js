@@ -26,6 +26,7 @@ router.post("/sign_up", async (req, res) => {
   );
   if (rows.length !== 0) return res.status(400).send("user already exists");
   const result = await athlete.insert();
+  athlete.sendVerificationCode();
   return res.send(result);
 });
 //login
@@ -41,7 +42,8 @@ router.post("/login", async (req, res) => {
   );
   if (!isValidPassword)
     return res.status(400).send("invalid user name or password");
-  const { password, ...rest } = athlete;
+  if (!athlete.is_verified) return res.status(403).send("account not verified");
+  const { password, verification_code, ...rest } = athlete;
   const token = jwt.sign(
     {
       ...rest,
@@ -50,7 +52,14 @@ router.post("/login", async (req, res) => {
   );
   return res.send(token);
 });
-
+router.post("/verify", async (req, res) => {
+  const athlete = await Athlete.findById(req.body.athlete_id);
+  if (!athlete) return res.status(404).send("athlete not found");
+  const isCorrectToken = athlete.isCorrectToken(req.token);
+  if (!isCorrectToken) return res.status(400).send("incorrect token");
+  await athlete.verifyAthlete();
+  return res.send("verified");
+});
 router.get("/is_unique/:email", async (req, res) => {
   const { error } = Athlete.customValidate({ email: req.params.email });
   if (error) return res.status(400).send(error.message);

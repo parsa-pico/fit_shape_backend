@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt");
 const crud = require("../mysql/crud.js");
 const authentication = require("../models/authentication");
 const Joi = require("joi");
+const randtoken = require("rand-token");
+const Email = require("./Email");
 class Athlete {
   constructor(obj) {
     this.national_code = obj.national_code;
@@ -22,6 +24,8 @@ class Athlete {
     this.house_number = obj.house_number;
     this.athlete_id = obj.athlete_id || null;
     this.is_in_gym = obj.is_in_gym || null;
+    this.is_verified = obj.is_verified || null;
+    this.verification_code = obj.verification_code || null;
   }
   static validate(obj) {
     return Joi.object(schema).validate(obj);
@@ -37,7 +41,7 @@ class Athlete {
     return authentication.validate(obj);
   }
   static async findOne(parameter, value) {
-    return await crud.findOne("athlete", parameter, value);
+    return new Athlete(await crud.findOne("athlete", parameter, value));
   }
   static async advancedSearch(queryObj, unionWithAnd = true) {
     return await crud.advancedSearch("athlete", queryObj, unionWithAnd);
@@ -69,6 +73,7 @@ class Athlete {
       value: this.athlete_id,
     });
   }
+
   static customValidate(updateObj) {
     const customSchema = {};
     for (let key in updateObj) {
@@ -77,10 +82,14 @@ class Athlete {
 
     return Joi.object(customSchema).validate(updateObj);
   }
+  generateVerificationCode() {
+    return randtoken.generate(16);
+  }
   async insert() {
     this.password = await bcrypt.hash(this.password, 10);
+    this.verification_code = this.generateVerificationCode();
     const [rows] = await promisePool.execute(
-      "call fit_shape.sign_up_athlete(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+      "call fit_shape.sign_up_athlete(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
       [
         this.national_code,
         this.blood_type_id,
@@ -95,10 +104,32 @@ class Athlete {
         this.street,
         this.alley,
         this.house_number,
+        this.verification_code,
       ]
     );
 
     return rows[0][0];
+  }
+  sendVerificationCode() {
+    Email.send(
+      [this.email],
+      "fit shape-verify your account",
+      `${this.verification_code}`
+    );
+  }
+  isCorrectToken(token) {
+    this.verification_code === token ? true : false;
+  }
+  async verifyAthlete() {
+    const [rows] = await promisePool.execute(
+      `
+  update athlete
+  set is_verified = 1
+  where athlete_id = ? 
+  `,
+      this.athlete_id
+    );
+    return rows;
   }
   static getBloodType(id) {
     switch (id) {
