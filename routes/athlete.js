@@ -25,9 +25,9 @@ router.post("/sign_up", async (req, res) => {
     false
   );
   if (rows.length !== 0) return res.status(400).send("user already exists");
-  const result = await athlete.insert();
+  await athlete.insert();
   athlete.sendVerificationCode();
-  return res.send(result);
+  return res.send({ athlete_id: athlete.athlete_id });
 });
 //login
 router.post("/login", async (req, res) => {
@@ -53,9 +53,14 @@ router.post("/login", async (req, res) => {
   return res.send(token);
 });
 router.post("/verify", async (req, res) => {
-  const athlete = await Athlete.findById(req.body.athlete_id);
+  const { error } = Athlete.validateForVerify(req.body);
+  if (error) return res.status(400).send(error.message);
+  const athlete = await Athlete.findById(req.body.user_id);
   if (!athlete) return res.status(404).send("athlete not found");
-  const isCorrectToken = athlete.isCorrectToken(req.token);
+  if (athlete.is_verified)
+    return res.status(409).send("this account is already verified");
+  const isCorrectToken = athlete.isCorrectToken(req.body.token);
+
   if (!isCorrectToken) return res.status(400).send("incorrect token");
   await athlete.verifyAthlete();
   return res.send("verified");

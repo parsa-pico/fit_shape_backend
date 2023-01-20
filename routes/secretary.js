@@ -1,6 +1,7 @@
 const express = require("express");
 const Joi = require("joi");
 const Athlete = require("../entities/athlete");
+const Email = require("../entities/Email");
 const secretaryAuth = require("../middlewares/secretaryAuth");
 const staffAuth = require("../middlewares/staffAuth");
 const router = express.Router();
@@ -22,5 +23,12 @@ router.get("/athlete", staffAuth, secretaryAuth, async (req, res) => {
   const rows = await Athlete.findAll();
 
   return res.send(rows);
+});
+router.post("/notify", staffAuth, secretaryAuth, async (req, res) => {
+  const { error } = Email.validate(req.body);
+  if (error) return res.status(400).send(error.message);
+  const email = new Email(req.body);
+  email.send();
+  return res.send("email sent");
 });
 module.exports = router;

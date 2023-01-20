@@ -1,4 +1,5 @@
 const schema = require("../models/athlete");
+const verifyUserSchema = require("../models/verifyUser");
 const { promisePool } = require("../mysql/connection");
 const bcrypt = require("bcrypt");
 const crud = require("../mysql/crud.js");
@@ -29,6 +30,9 @@ class Athlete {
   }
   static validate(obj) {
     return Joi.object(schema).validate(obj);
+  }
+  static validateForVerify(obj) {
+    return Joi.object(verifyUserSchema).validate(obj);
   }
   static async findAll() {
     const [rows] = await promisePool.execute(`select
@@ -107,18 +111,19 @@ class Athlete {
         this.verification_code,
       ]
     );
-
-    return rows[0][0];
+    this.athlete_id = rows[0][0].athlete_id;
   }
   sendVerificationCode() {
-    Email.send(
-      [this.email],
-      "fit shape-verify your account",
-      `${this.verification_code}`
-    );
+    const email = new Email({
+      receiversArr: [this.email],
+      subject: "fit shape-verify your account",
+      html: `<h3>click on the link to activate your account:</h3>
+      ${process.env.FRONT_BASE_URL}/callback/verify_athlete?user_id=${this.athlete_id}&token=${this.verification_code}`,
+    });
+    return email.send();
   }
   isCorrectToken(token) {
-    this.verification_code === token ? true : false;
+    return this.verification_code === token ? true : false;
   }
   async verifyAthlete() {
     const [rows] = await promisePool.execute(
@@ -127,7 +132,7 @@ class Athlete {
   set is_verified = 1
   where athlete_id = ? 
   `,
-      this.athlete_id
+      [this.athlete_id]
     );
     return rows;
   }

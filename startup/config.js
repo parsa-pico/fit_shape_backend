@@ -19,4 +19,8 @@ module.exports = function () {
     console.log("gmail password is not defined in env");
     throw new Error("gmail password is not defined in env");
   }
+  if (!process.env.FRONT_BASE_URL) {
+    console.log("front base url is not defined in env");
+    throw new Error("front base url is not defined in env");
+  }
 };

@@ -7,7 +7,7 @@ class IdPay {
       {
         order_id: sub_id.toString(),
         amount,
-        callback: "http://localhost:3001/callback/verify_payment",
+        callback: process.env.FRONT_BASE_URL + "/callback/verify_payment",
       },
       {
         headers: {
