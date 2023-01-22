@@ -46,7 +46,8 @@ router.post("/notify", staffAuth, secretaryAuth, async (req, res) => {
     const email = new Email({
       receiversArr: emails,
       subject: req.body.subject,
-      html: req.body.html,
+      html: `${req.body.html}
+      <div> written by ${req.staff.first_name} ${req.staff.last_name} </div>`,
     });
     email.send();
     return res.send("email sent");
