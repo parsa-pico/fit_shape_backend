@@ -14,9 +14,11 @@ router.put("/athlete/:id", staffAuth, secretaryAuth, async (req, res) => {
   }
   const athlete = await Athlete.findById(parseInt(req.params.id));
   if (!athlete) return res.status(404).send("athelte not found");
-  await athlete.update({
-    rfid_tag: { isNotString: true, value: req.body.rfid_tag },
-  });
+  const updateObj =
+    req.body.rifd_tag === null
+      ? { rfid_tag: { isNotString: true, value: req.body.rfid_tag } }
+      : { rfid_tag: req.body.rfid_tag };
+  await athlete.update(updateObj);
   return res.send(athlete);
 });
 router.get("/athlete", staffAuth, secretaryAuth, async (req, res) => {
@@ -24,11 +26,32 @@ router.get("/athlete", staffAuth, secretaryAuth, async (req, res) => {
 
   return res.send(rows);
 });
-router.post("/notify", staffAuth, secretaryAuth, async (req, res) => {
-  const { error } = Email.validate(req.body);
+router.post("/custom_notify", staffAuth, secretaryAuth, async (req, res) => {
+  const { error } = Email.validateForCustomReceivers(req.body);
   if (error) return res.status(400).send(error.message);
-  const email = new Email(req.body);
-  email.send();
-  return res.send("email sent");
+
+  try {
+    const email = new Email(req.body);
+    email.send();
+    return res.send("email sent");
+  } catch (error) {
+    return res.send("something failed when sending emails");
+  }
+});
+router.post("/notify", staffAuth, secretaryAuth, async (req, res) => {
+  const { error } = Email.validateForCustomTypes(req.body);
+  if (error) return res.status(400).send(error.message);
+  const emails = await Email.getUsersMails(req.body.types);
+  try {
+    const email = new Email({
+      receiversArr: emails,
+      subject: req.body.subject,
+      html: req.body.html,
+    });
+    email.send();
+    return res.send("email sent");
+  } catch (error) {
+    return res.send("something failed when sending emails");
+  }
 });
 module.exports = router;

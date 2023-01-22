@@ -45,7 +45,9 @@ class Athlete {
     return authentication.validate(obj);
   }
   static async findOne(parameter, value) {
-    return new Athlete(await crud.findOne("athlete", parameter, value));
+    const result = await crud.findOne("athlete", parameter, value);
+    if (!result) return null;
+    return new Athlete(result);
   }
   static async advancedSearch(queryObj, unionWithAnd = true) {
     return await crud.advancedSearch("athlete", queryObj, unionWithAnd);

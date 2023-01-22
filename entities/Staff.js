@@ -26,8 +26,9 @@ class Staff {
     return authenticationSchema.validate(obj);
   }
   static async findOne(parameter, value) {
-    const rows = await crud.findOne("staff", parameter, value);
-    return new Staff(rows);
+    const result = await crud.findOne("staff", parameter, value);
+    if (!result) return null;
+    return new Staff(result);
   }
   static async advancedSearch(queryObj, unionWithAnd = true, select) {
     return await crud.advancedSearch("staff", queryObj, unionWithAnd, select);

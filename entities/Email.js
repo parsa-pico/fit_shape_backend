@@ -1,6 +1,10 @@
 const Joi = require("joi");
 const mailService = require("../services/nodeMailer");
-const notifySchema = require("../models/notify");
+const {
+  customNotifySchema,
+  notifyPerJobPositionSchema,
+} = require("../models/notify");
+const { promisePool } = require("../mysql/connection");
 class Email {
   constructor(obj) {
     this.receiversArr = obj.receiversArr;
@@ -16,11 +20,26 @@ class Email {
       html: this.html,
     };
     mailService.sendMail(mailOptions, (error, info) => {
-      if (error) throw new Error(error);
+      if (error) {
+        throw new Error(error);
+      }
     });
   }
-  static validate(obj) {
-    return Joi.object(notifySchema).validate(obj);
+  static validateForCustomReceivers(obj) {
+    return Joi.object(customNotifySchema).validate(obj);
+  }
+  static validateForCustomTypes(obj) {
+    return Joi.object(notifyPerJobPositionSchema).validate(obj);
+  }
+  static async getUsersMails(types) {
+    let query = [];
+    types.forEach((type) => query.push(` job_position_id=${type} `));
+    query = query.join(" or ");
+
+    const [rows] = await promisePool.query(
+      `select email from users_emails where ${query}`
+    );
+    return rows.map((row) => row.email);
   }
 }
 module.exports = Email;
