@@ -1,9 +1,13 @@
 const express = require("express");
 const Owner = require("../entities/Owner");
+const Sub = require("../entities/Sub");
 const router = express.Router();
 const ownerAuth = require("../middlewares/ownerAuth");
 const staffAuth = require("../middlewares/staffAuth");
 const Staff = require("../entities/Staff");
+const Joi = require("joi");
+const subType = require("../models/subType");
+
 router.get(
   "/staff/:limit/:pageNumber",
   staffAuth,
@@ -32,5 +36,14 @@ router.put("/staff", staffAuth, ownerAuth, async (req, res) => {
     job_position_id: req.body.job_position_id,
   });
   return res.send(staff);
+});
+router.put("/sub_type", staffAuth, ownerAuth, async (req, res) => {
+  const { error } = Joi.object(subType).validate(req.body);
+  if (error) return res.status(400).send(error.message);
+  await Sub.updatePrices(
+    { price_per_day: req.body.price_per_day },
+    req.body.sub_type_id
+  );
+  return res.send("ok");
 });
 module.exports = router;

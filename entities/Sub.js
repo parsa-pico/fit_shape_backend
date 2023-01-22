@@ -119,11 +119,11 @@ class Sub {
       value: this.sub_id,
     });
   }
-  //   async delete() {
-  //     await promisePool.execute('delete from subscription where sub_id=?', [
-  //       this.sport_history_id,
-  //     ]);
-  //     return this;
-  //   }
+  static async updatePrices(updateObj, sub_type_id) {
+    return await crud.update("sub_type", updateObj, {
+      key: "sub_type_id",
+      value: sub_type_id,
+    });
+  }
 }
 module.exports = Sub;
