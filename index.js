@@ -4,5 +4,5 @@ require("./startup/config")();
 require("express-async-errors");
 const app = require("express")();
 require("./startup/routes")(app);
-
-app.listen(3000, () => console.log("listening..."));
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log("listening on port " + port));
