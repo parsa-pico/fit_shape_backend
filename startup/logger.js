@@ -18,12 +18,12 @@ module.exports = function () {
     console.log("uncaught exeception happend");
     console.log(ex);
     logger.error(ex.message, ex);
-    process.exit(1);
+    // process.exit(1);
   });
 
   process.on("unhandledRejection", (ex) => {
     console.log("unhandled Rejection  happend");
     logger.error(ex.message, ex);
-    process.exit(1);
+    // process.exit(1);
   });
 };
