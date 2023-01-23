@@ -1,27 +1,29 @@
-const winston = require('winston');
+const winston = require("winston");
 
 module.exports = function () {
   const logger = winston.createLogger({
-    level: 'info',
+    level: "info",
     format: winston.format.combine(
       winston.format.timestamp(),
       winston.format.json()
     ),
-    defaultMeta: { service: 'user-service' },
+    defaultMeta: { service: "user-service" },
     transports: [
-      new winston.transports.File({ filename: 'error.log', level: 'error' }),
-      new winston.transports.File({ filename: 'combined.log' }),
+      new winston.transports.File({ filename: "error.log", level: "error" }),
+      new winston.transports.File({ filename: "combined.log" }),
     ],
   });
 
-  process.on('uncaughtException', (ex) => {
-    console.log('uncaught exeception happend');
+  process.on("uncaughtException", (ex) => {
+    console.log("uncaught exeception happend");
     console.log(ex);
     logger.error(ex.message, ex);
+    process.exit(1);
   });
 
-  process.on('unhandledRejection', (ex) => {
-    console.log('unhandled Rejection  happend');
+  process.on("unhandledRejection", (ex) => {
+    console.log("unhandled Rejection  happend");
     logger.error(ex.message, ex);
+    process.exit(1);
   });
 };
