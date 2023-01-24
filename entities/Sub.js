@@ -119,11 +119,15 @@ class Sub {
       value: this.sub_id,
     });
   }
+
   static async updatePrices(updateObj, sub_type_id) {
     return await crud.update("sub_type", updateObj, {
       key: "sub_type_id",
       value: sub_type_id,
     });
+  }
+  static async advancedSearch(queryObj, unionWithAnd = true) {
+    return await crud.advancedSearch("subscription", queryObj, unionWithAnd);
   }
 }
 module.exports = Sub;

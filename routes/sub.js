@@ -51,6 +51,7 @@ router.post("/", athleteAuth, async (req, res) => {
   await payment.insert();
   return res.send({ ...sub, payment_link });
 });
+//chnage coach
 router.put("/:id", athleteAuth, async (req, res) => {
   const { error } = Sub.validateCoach(req.body);
   if (error) return res.status(400).send(error.message);

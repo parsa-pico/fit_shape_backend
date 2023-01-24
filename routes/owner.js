@@ -8,16 +8,18 @@ const Staff = require("../entities/Staff");
 const Joi = require("joi");
 const subType = require("../models/subType");
 
-router.get(
+// this is get method,but get method doesnt support req.body and i wanna have nested obj
+router.post(
   "/staff/:limit/:pageNumber",
   staffAuth,
   ownerAuth,
   async (req, res) => {
-    const rows = await Owner.getAllStaff(
+    const [rows, count, totalPages] = await Owner.getAllStaff(
       parseInt(req.params.limit),
-      parseInt(req.params.pageNumber)
+      parseInt(req.params.pageNumber),
+      req.body
     );
-    return res.send(rows);
+    return res.send({ rows, count, totalPages });
   }
 );
 router.put("/staff", staffAuth, ownerAuth, async (req, res) => {

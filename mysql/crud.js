@@ -33,6 +33,19 @@ module.exports.advancedSearch = async function advancedSearch(
   );
   return rows;
 };
+module.exports.convertQueryObjToString = function convertQueryObjToString(
+  queryObj,
+  unionWithAnd = true
+) {
+  let queryArray = [];
+  for (let key in queryObj) {
+    if (!queryObj[key].like)
+      queryArray.push(`${key} = '${queryObj[key].value}'`);
+    else queryArray.push(`${key} like '%${queryObj[key].value}%'`);
+  }
+  const union = unionWithAnd ? " and " : " or ";
+  return queryArray.join(union);
+};
 module.exports.findOne = async function (tableName, parameter, value) {
   const [rows] = await promisePool.query(
     `select * from ${tableName} where ${parameter}='${value}' limit 1`

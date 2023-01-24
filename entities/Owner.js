@@ -3,14 +3,25 @@ const Joi = require("joi");
 const crud = require("../mysql/crud.js");
 
 class Owner {
-  static async getAllStaff(limit, pageNumber) {
+  static async getAllStaff(limit, pageNumber, queryObj) {
     const offset = (pageNumber - 1) * limit;
+    let where = `where staff_id != ${process.env.OWNER_ID} `;
+
+    if (Object.keys(queryObj).length !== 0) {
+      where += " and " + crud.convertQueryObjToString(queryObj);
+    }
     const [rows] = await promisePool.execute(
       `select staff_id,national_code,job_position_id,phone_number,email,
       first_name,last_name,city,street,alley,house_number 
-      from staff where staff_id!=${process.env.OWNER_ID} limit ${limit} offset ${offset} `
+      from staff ${where} limit ${limit} offset ${offset} `
     );
-    return rows;
+    const [countRows] = await promisePool.execute(
+      `select count(staff_id) as count
+      from staff ${where} `
+    );
+    const count = countRows[0].count;
+    const totalPages = Math.ceil(count / limit);
+    return [rows, count, totalPages];
   }
 
   static validate(obj) {

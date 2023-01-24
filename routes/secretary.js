@@ -2,6 +2,7 @@ const express = require("express");
 const Joi = require("joi");
 const Athlete = require("../entities/athlete");
 const Email = require("../entities/Email");
+const Sub = require("../entities/Sub");
 const secretaryAuth = require("../middlewares/secretaryAuth");
 const staffAuth = require("../middlewares/staffAuth");
 const router = express.Router();
@@ -26,6 +27,7 @@ router.get("/athlete", staffAuth, secretaryAuth, async (req, res) => {
 
   return res.send(rows);
 });
+// this end point is not in use
 router.post("/custom_notify", staffAuth, secretaryAuth, async (req, res) => {
   const { error } = Email.validateForCustomReceivers(req.body);
   if (error) return res.status(400).send(error.message);
@@ -54,5 +56,27 @@ router.post("/notify", staffAuth, secretaryAuth, async (req, res) => {
   } catch (error) {
     return res.send("something failed when sending emails");
   }
+});
+//get all subs
+// router.get('/sub',staffAuth,secretaryAuth,async(req,res)=>{
+//   const rows=await Sub.f
+// })
+// change coach
+router.put("/sub/:id", staffAuth, secretaryAuth, async (req, res) => {
+  const { error } = Sub.validateCoach(req.body);
+  if (error) return res.status(400).send(error.message);
+
+  const sub = await Sub.findById(req.params.id);
+
+  if (!sub) return res.status(404).send("didnt find subscription with this id");
+  if (sub.sub_type_id != 2)
+    return res.status(403).send("subscription type is normal");
+
+  if (sub.coach_id)
+    return res
+      .status(403)
+      .send("you can only update coach  if it is not selected");
+  await sub.update(req.body);
+  return res.send(sub);
 });
 module.exports = router;
