@@ -11,16 +11,14 @@ router.post("/sign_up", async (req, res) => {
   const { error } = Staff.validate(req.body);
   if (error) return res.status(400).send(error.message);
 
-  const staff = new Staff(req.body);
   const rows = await Staff.advancedSearch(
     {
-      national_code: staff.national_code,
-      phone_number: staff.phone_number,
-      email: staff.email,
+      email: req.body.email,
     },
     false
   );
   if (rows.length !== 0) return res.status(400).send("user already exists");
+  const staff = new Staff(req.body);
   const result = await staff.insert();
   return res.send(result);
 });

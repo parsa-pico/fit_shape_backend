@@ -3,7 +3,6 @@ const { promisePool } = require("./connection");
 module.exports.update = async function (tableName, updateObj, idObj) {
   let q = [];
   for (let key in updateObj) {
-    console.log(key, updateObj[key]);
     if (typeof updateObj[key] === "object" && updateObj[key].isNotString)
       q.push(` ${key}= ${updateObj[key].value} `);
     else q.push(` ${key}='${updateObj[key]}' `);

@@ -52,6 +52,15 @@ router.post("/login", async (req, res) => {
   );
   return res.send(token);
 });
+router.post("/re_send_verification", async (req, res) => {
+  const athlete = await Athlete.findOne("athlete_id", req.body.athlete_id);
+  if (!athlete) return res.status(404).send("user not found");
+  if (athlete.is_verified) return res.status(403).send("user already verified");
+  const verification_code = athlete.generateVerificationCode();
+  await athlete.update({ verification_code });
+  athlete.sendVerificationCode();
+  return res.send("check your email");
+});
 router.post("/verify", async (req, res) => {
   const { error } = Athlete.validateForVerify(req.body);
   if (error) return res.status(400).send(error.message);

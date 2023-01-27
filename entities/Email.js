@@ -23,6 +23,7 @@ class Email {
       if (error) {
         throw new Error(error);
       }
+      console.log(info);
     });
   }
   static validateForCustomReceivers(obj) {
