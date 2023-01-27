@@ -6,10 +6,16 @@ class Gate {
     relay.setState(1, true);
     setTimeout(() => {
       relay.setState(1, false);
-    }, 445);
+    }, 450);
   }
   static getState() {
     return relay.getState(1);
+  }
+  static on() {
+    relay.setState(1, true);
+  }
+  static off() {
+    relay.setState(1, false);
   }
 }
 module.exports = Gate;
