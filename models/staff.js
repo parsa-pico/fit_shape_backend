@@ -1,8 +1,8 @@
 const Joi = require("joi");
 
 module.exports = {
-  national_code: Joi.string().required().min(10).max(10),
-  phone_number: Joi.string().required().min(11).max(11),
+  national_code: Joi.string().required().length(10),
+  phone_number: Joi.string().required().length(11),
   email: Joi.string().email().required(),
   password: Joi.string().required().min(8).max(255),
   first_name: Joi.string().required().max(45),
