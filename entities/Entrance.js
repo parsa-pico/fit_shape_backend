@@ -15,6 +15,7 @@ class Entracne {
     FROM entrance e 
     join subscription using(sub_id)
     join athlete using(athlete_id)
+    order by e.entered_date_time desc
     limit ${limit} offset ${offset} `);
     return rows;
   }
