@@ -16,6 +16,7 @@ const owner = require("../routes/owner");
 const entrance = require("../routes/entrance");
 const secretary = require("../routes/secretary");
 const gate = require("../routes/gate");
+
 module.exports = function (app) {
   app.use(cors());
   app.use(express.json());
@@ -34,5 +35,6 @@ module.exports = function (app) {
   app.use("/entrance", entrance);
   app.use("/secretary", secretary);
   app.use("/gate", gate);
+
   app.use(error);
 };
