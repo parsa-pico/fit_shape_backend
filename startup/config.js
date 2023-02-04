@@ -23,4 +23,13 @@ module.exports = function () {
     console.log("front base url is not defined in env");
     throw new Error("front base url is not defined in env");
   }
+  if (
+    !process.env.MYSQL_HOST ||
+    !process.env.MYSQL_USER ||
+    !process.env.MYSQL_PASSWORD ||
+    !process.env.MYSQL_DATABASE
+  ) {
+    console.log("MYSQL CONFIGS ARE not defined in env");
+    throw new Error("MYSQL CONFIGS ARE not defined in env");
+  }
 };
