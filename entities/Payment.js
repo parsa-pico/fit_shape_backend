@@ -47,7 +47,7 @@ class Payment {
       join subscription s using(sub_id)
       join athlete a using (athlete_id)
       where status_id=3
-      group by athlete_id with rollup    
+      group by athlete_id 
     `
     );
 
