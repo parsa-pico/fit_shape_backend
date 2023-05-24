@@ -1,15 +1,27 @@
 const express = require("express");
+const path = require("path");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Athlete = require("../entities/athlete");
-const { promisePool } = require("../mysql/connection");
-const sportHistory = require("./sportHistory");
 const athleteAuth = require("../middlewares/athleteAuth");
-const SubHasPlan = require("../entities/SubHasPlan");
-const Sub = require("../entities/Sub");
 const Staff = require("../entities/Staff");
 const router = express.Router();
+const multer = require("multer");
+const fs = require("fs");
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./images");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+    );
+  },
+});
 
+const upload = multer({ storage });
 //signup
 router.post("/sign_up", async (req, res) => {
   const { error } = Athlete.validate(req.body);
@@ -104,5 +116,24 @@ router.put("/", athleteAuth, async (req, res) => {
   const { password, ...rest } = athlete;
   return res.send(rest);
 });
-
+router.get(`/avatar/:filename`, async (req, res) => {
+  res.sendFile(
+    `J:/MY-PROJECTS/My node projects/fit_shape_back/images/${req.params.filename}`
+  );
+});
+router.post(
+  "/avatar",
+  athleteAuth,
+  upload.single("avatar"),
+  async (req, res, next) => {
+    const athlete = await Athlete.findById(req.athlete.athlete_id);
+    if (athlete.avatar) {
+      fs.unlink(`./images/${athlete.avatar}`, (err) => {
+        if (err) next(err);
+      });
+    }
+    await athlete.update({ avatar: req.file.filename });
+    res.send(athlete);
+  }
+);
 module.exports = router;

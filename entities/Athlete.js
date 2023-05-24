@@ -27,6 +27,7 @@ class Athlete {
     this.is_in_gym = obj.is_in_gym || null;
     this.is_verified = obj.is_verified || null;
     this.verification_code = obj.verification_code || null;
+    this.avatar = obj.avatar || null;
   }
   static validate(obj) {
     return Joi.object(schema).validate(obj);

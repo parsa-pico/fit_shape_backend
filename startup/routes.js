@@ -16,6 +16,7 @@ const owner = require("../routes/owner");
 const entrance = require("../routes/entrance");
 const secretary = require("../routes/secretary");
 const gate = require("../routes/gate");
+const upload = require("../routes/upload");
 
 module.exports = function (app) {
   app.use(cors());
@@ -35,6 +36,6 @@ module.exports = function (app) {
   app.use("/entrance", entrance);
   app.use("/secretary", secretary);
   app.use("/gate", gate);
-
+  app.use("/upload", upload);
   app.use(error);
 };
