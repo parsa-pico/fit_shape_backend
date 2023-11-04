@@ -27,7 +27,8 @@ module.exports = function () {
     !process.env.MYSQL_HOST ||
     !process.env.MYSQL_USER ||
     !process.env.MYSQL_PASSWORD ||
-    !process.env.MYSQL_DATABASE
+    !process.env.MYSQL_DATABASE ||
+    !process.env.MYSQL_PORT
   ) {
     console.log("MYSQL CONFIGS ARE not defined in env");
     throw new Error("MYSQL CONFIGS ARE not defined in env");

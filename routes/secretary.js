@@ -1,6 +1,6 @@
 const express = require("express");
 const Joi = require("joi");
-const Athlete = require("../entities/athlete");
+const Athlete = require("../entities/Athlete");
 const Email = require("../entities/Email");
 const Sub = require("../entities/Sub");
 const secretaryAuth = require("../middlewares/secretaryAuth");

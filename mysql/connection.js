@@ -9,6 +9,7 @@ const pool = mysql2.createPool({
   connectionLimit: 10,
   queueLimit: 0,
   dateStrings: true,
+  port: process.env.MYSQL_PORT,
 });
 const promisePool = pool.promise();
 module.exports.promisePool = promisePool;
